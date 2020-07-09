@@ -1,0 +1,33 @@
+[<array of Ids>].forEach(function(id){
+    var docs = db.getCollection("getExposure").find({"id":id})
+    var header = ["ApplicantId", "ApplicantName", "CustomerId", "LanNumber", "OrgID","OutStandingLoanAmount"];
+    var valueToBePrinted = ["applicantId","customerName","customerId","lan","orgId","outstandingLoanAmt"];
+    print("==================================================================================================")
+    print("----------------case Id:",id, "--------");
+    printHeader(header)
+    docs.forEach(function(doc){
+   
+    printExposureDetails(doc.exposureDetails, valueToBePrinted);
+    })
+    print()
+})
+
+function printExposureDetails(exposureObject,valueToBePrinted){
+    var data = "";
+    exposureObject.forEach(function(exposure){
+    valueToBePrinted.forEach(function(value){
+        data = data +"      "+ String(exposure[value]);
+    })
+    
+    console.log("|",data,"|\n");
+    data = "";
+    })
+}
+
+function printHeader(listOfHeaders){
+    var gridHead = "";
+    listOfHeaders.forEach(function(header){
+        gridHead = gridHead +"       "+ header;
+    })
+    console.log("|",gridHead,"|");
+}
