@@ -1,0 +1,27 @@
+var stringBuffer;
+db.loanCharges.aggregate([
+    { $match: { _id: { $in: ['ML000004684', 'ML000004506'] } } },
+    { $project: { Fees: '$feesDetails' } },
+    { $unwind : "$Fees" }
+  ])
+  .forEach(function (fee) {
+    try {
+      if (fee.Fees != undefined) {
+          if (fee.Fees.feeRecoveryMode == 'Initial Receipt') {
+            fee.Fees.ire = fee.Fees.feePricingCrossDetails[0].status;
+            fee.Fees.feePricingCrossDetails.splice( 0,fee.Fees.feePricingCrossDetails.length);
+          }
+          fee.Fees.feePricingCrossDetails.splice(0,fee.Fees.feePricingCrossDetails.length );
+          if (fee.Fees.udyogFile != undefined) {
+            fee.Fees.udyogFile = null;
+          }
+      }
+     //var json = JSON.stringify(fee);
+      stringBuffer = fee._id+","+fee.Fees.feeType+","+fee.Fees.ire
+      print(stringBuffer);
+      stringBuffer = "";
+    } catch (Exception) {
+      print(fee._id);
+    }
+  });
+  
